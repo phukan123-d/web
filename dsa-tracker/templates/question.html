@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ question.title }} · DSA Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">DSA Tracker</div>
+      <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="#suggestions">AI Suggestions</a>
+      </nav>
+    </header>
+
+    <section class="detail-hero">
+      <div class="detail-copy">
+        <span class="eyebrow">Question detail</span>
+        <h1>{{ question.title }}</h1>
+        <p class="meta">Topic: {{ question.topic }} · Difficulty: {{ question.difficulty }} · Status: {{ question.status }}</p>
+        <div class="detail-tags">{{ question.tags or 'no tags yet' }}</div>
+        <button class="button button-primary solve-button" data-id="{{ question.id }}">Mark solved</button>
+      </div>
+      <div class="detail-card">
+        <h3>Your notes</h3>
+        <p>{{ question.notes or 'No notes added yet.' }}</p>
+      </div>
+    </section>
+
+    <section class="panel code-panel">
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">Solution code</span>
+          <h2>Saved code snippet</h2>
+        </div>
+      </div>
+      <pre><code>{{ question.code or 'No code saved for this question.' }}</code></pre>
+    </section>
+
+    <section id="suggestions" class="panel panel-suggest">
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">AI Suggestions</span>
+          <h2>Questions similar to this one</h2>
+        </div>
+      </div>
+      <div class="grid-list">
+        {% for q in suggestions %}
+        <article class="card small-card">
+          <div class="card-badge {{ 'solved' if q.solved else 'todo' }}">{{ q.status }}</div>
+          <h3>{{ q.title }}</h3>
+          <p class="meta">{{ q.topic }} · {{ q.difficulty }}</p>
+          <p class="tags">{{ q.tags or 'no tags' }}</p>
+          <a class="button button-outline" href="{{ url_for('question_page', question_id=q.id) }}">Open</a>
+        </article>
+        {% else %}
+        <div class="empty-state">No similar questions found yet.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <footer class="footer footer-detail">
+      <p>AI suggestions are generated from your existing tracked problems.</p>
+    </footer>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

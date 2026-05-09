@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSA Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">DSA Tracker</div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#track">Track</a>
+        <a href="#add">Add</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Build habits. Track practice. Find similar problems.</span>
+        <h1>DSA practice with Netflix-style flow.</h1>
+        <p>Record solved questions, manage your code, and get AI-style suggestions for the next challenge.</p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-inner">
+          <div class="hero-tag">Suggested for you</div>
+          <h2>Graph challenges & dynamic programming</h2>
+          <p>Keep your streak, track each solution, and explore questions that feel familiar.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="feature-strip">
+      <div class="feature-card animate-fade">
+        <h3>AI-style suggestions</h3>
+        <p>Similar questions are recommended based on topic, difficulty, and tags.</p>
+      </div>
+      <div class="feature-card animate-fade delay-1">
+        <h3>Netflix UI motion</h3>
+        <p>Dark theme, animated cards, row scrolling, and polished hover effects.</p>
+      </div>
+      <div class="feature-card animate-fade delay-2">
+        <h3>Code history</h3>
+        <p>Save title, topic, difficulty, code, and notes for every challenge.</p>
+      </div>
+    </section>
+
+    <section id="track" class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">Your questions</span>
+          <h2>Saved DSA items</h2>
+        </div>
+      </div>
+
+      <div class="progress-grid">
+        <div class="progress-card">
+          <p class="eyebrow">Total tracked</p>
+          <h3>{{ progress.total }}</h3>
+          <p>{{ progress.solved }} solved · {{ progress.review }} review · {{ progress.todo }} todo</p>
+        </div>
+        <div class="progress-card">
+          <p class="eyebrow">Completion rate</p>
+          <h3>{{ progress.percent }}%</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ progress.percent }}%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-list">
+        {% for question in questions %}
+        <article class="card">
+          <div class="card-badge {{ 'solved' if question.solved else 'todo' }}">{{ question.status }}</div>
+          <h3>{{ question.title }}</h3>
+          <p class="meta">{{ question.topic }} · {{ question.difficulty }}</p>
+          <p class="tags">{{ question.tags or 'no tags yet' }}</p>
+          <div class="card-actions">
+            <a class="button button-outline" href="{{ url_for('question_page', question_id=question.id) }}">View</a>
+            {% if not question.solved %}
+            <button class="button button-primary solve-button" data-id="{{ question.id }}">Mark solved</button>
+            {% else %}
+            <span class="status-pill">Solved</span>
+            {% endif %}
+          </div>
+        </article>
+        {% else %}
+        <div class="empty-state">No questions tracked yet. Add your first one below.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="ai-agent" class="panel panel-dark">
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">AI agent</span>
+          <h2>Generate new DSA question ideas</h2>
+        </div>
+      </div>
+      <form id="generate-form" class="form-grid">
+        <label>Topic<input name="topic" placeholder="Array, Graph, DP"></label>
+        <label>Difficulty<select name="difficulty">
+          <option>Easy</option>
+          <option selected>Medium</option>
+          <option>Hard</option>
+        </select></label>
+        <label>Tags<input name="tags" placeholder="graph, bfs, greedy"></label>
+        <button class="button button-primary full" type="submit">Generate ideas</button>
+      </form>
+      <div id="generated-results" class="grid-list">
+        <div class="empty-state">Enter a topic and tags above, then click Generate ideas.</div>
+      </div>
+    </section>
+
+    <section id="add" class="panel panel-dark">
+      <div class="panel-header">
+        <div>
+          <span class="eyebrow">Add new problem</span>
+          <h2>Log your next DSA question</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" method="post" action="{{ url_for('add_question') }}">
+        <label>Title<input name="title" placeholder="Two-sum, Tree DP, Sliding Window" required></label>
+        <label>Topic<input name="topic" placeholder="Array, Graph, DP"></label>
+        <label>Difficulty<select name="difficulty">
+          <option>Easy</option>
+          <option selected>Medium</option>
+          <option>Hard</option>
+        </select></label>
+        <label>Status<select name="status">
+          <option value="todo" selected>todo</option>
+          <option value="done">done</option>
+          <option value="review">review</option>
+        </select></label>
+        <label>Tags<input name="tags" placeholder="graph, bfs, greedy"></label>
+        <label class="full">Code<textarea name="code" rows="6" placeholder="Paste your solution code here"></textarea></label>
+        <label class="full">Notes<textarea name="notes" rows="4" placeholder="How you solved it, what was tricky"></textarea></label>
+        <button class="button button-primary full" type="submit">Save question</button>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <p>DSA Tracker © 2026 · Built with Flask, SQLite, and Netflix-inspired UI.</p>
+    </footer>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
